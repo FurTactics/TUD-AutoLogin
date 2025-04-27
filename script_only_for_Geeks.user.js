@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name            TUD AutoLogin with generating the 2FA
 // @namespace       https://tud-autologin.spyfly.xyz/
-// @version         0.4.4
+// @version         0.4.5
 // @description     Stop wasting your time entering login credentials or pressing useless buttons! The script allows you to fully automate the entry of all login details, including two-factor authentication. (updated from spyfly)
 // @description:de  Verschwende keine Zeit mehr mit dem Eingeben von Anmeldedaten oder dem Drücken sinnloser Tasten! Mit dem Skript kann man die Eingabe aller Anmeldedaten, einschließlich der Zwei-Faktor-Authentifizierung, vollständig automatisieren.
 // @description:ru  Перестань тратить время на ввод данных или кликанье бесполезных кнопок! Скрипт позволяет полностью автоматизировать ввод всех данных, включая двухфакторную аутентификацию.
@@ -108,8 +108,8 @@
     const isMoodle = (window.location.host == "tud.uni-leipzig.de");
 
     const credentialsAvailable = (tud.username.length > 0 && tud.password.length > 0);
-    const secretIsAvailable = tud.secret.length > 5;
-    const stat = GM_getValue("stats");
+    const secretIsAvailable = tud.secret.length == 32;
+    const stat = GM_getValue("stats") == undefined ? 0 : GM_getValue("stats");
     const menu_command_id_1 = GM_registerMenuCommand("You saved " + stat + " clicks 👍", function (event) { console.clear; console.log("You are awesome. " + stat + " clicks is more than " + Math.round(stat / 60) + " minutes. If you want, you can support me on GitHub https://github.com/FurTactics/TUD-AutoLogin/") }, { autoClose: false });
     const menu_command_id_2 = GM_registerMenuCommand("Delete all your saved data", function (event) {
         const keys = GM_listValues();
@@ -249,7 +249,7 @@
                 GM_setValue("stats", GM_getValue("stats") + 1);
             }
         }
-        if (hasSecretField) {
+        if (hasSecretField && secretIsAvailable) {
             enterSecret();
         }
     }
